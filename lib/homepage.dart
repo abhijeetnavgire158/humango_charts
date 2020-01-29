@@ -1,0 +1,352 @@
+import 'dart:convert';
+
+import 'package:humango_chart/activitydata.dart';
+import 'package:humango_chart/place_polygon.dart';
+import 'package:humango_chart/tooltip.dart';
+import 'package:flutter/material.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+class HomePage extends StatefulWidget {
+  final Widget child;
+  final String jsonFile;
+
+  HomePage({Key key, this.child, @required this.jsonFile}) : super(key: key);
+
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
+  String textSelected;
+  String modelSelected;
+  List<charts.Series<Activitydata, double>> _seriesLineData;
+  List<Activitydata> activityListData;
+  bool _isTempratureSelected = true;
+  bool _isPaceSelected = false;
+  String _leftYaxisText = 'Heart-Rate';
+  String _rightYaxisText = 'Temperature|Speed|';
+
+  bool isload = false;
+
+  getPace(double speed) {
+    double speedMPh = speed * 2.23694;
+    return (1 / speedMPh) * 60;
+  }
+
+/**
+ * remove temperature label from right y-axis
+ */
+  removeTemperature() {
+    _seriesLineData.removeWhere((item) => item.id == 'Temperature');
+    _rightYaxisText = _rightYaxisText.replaceFirst('Temperature|', '');
+  }
+
+/**
+ * add temperature metric on chart
+ */
+  addTemperature() {
+    _seriesLineData.add(
+      charts.Series(
+        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff109618)),
+        id: 'Temperature',
+        data: activityListData,
+        domainFn: (Activitydata activity, _) =>
+            double.parse(activity.elapsedTime),
+        measureFn: (Activitydata activity, _) => activity.temperature != null
+            ? double.parse(activity.temperature)
+            : null,
+      )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
+    );
+    _rightYaxisText = _rightYaxisText.replaceFirst('Temperature|', '');
+    _rightYaxisText = _rightYaxisText + '' + 'Temperature|';
+  }
+
+  /**
+   * Remove lable from right y-axis
+   */
+  removePace() {
+    _seriesLineData.removeWhere((item) => item.id == 'pace(min/miles)');
+    _rightYaxisText = _rightYaxisText.replaceFirst('Pace|', '');
+  }
+
+  /**
+   * Add Pace metric
+   */
+  addPace() {
+    _seriesLineData.add(
+      charts.Series(
+        colorFn: (__, _) => charts.Color.fromHex(code: '#2F4F4F'),
+        id: 'pace(min/miles)',
+        data: activityListData,
+        domainFn: (Activitydata activity, _) =>
+            double.parse(activity.elapsedTime),
+        measureFn: (Activitydata activity, _) =>
+            activity.speed != null ? double.parse(activity.speed) : null,
+      )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
+    );
+    _rightYaxisText = _rightYaxisText.replaceFirst('Pace|', '');
+    _rightYaxisText = _rightYaxisText + ' ' + 'Pace|';
+  }
+
+  _generateData({String jsonFile = "jsondata/data2.json"}) async {
+    print('generateData ss');
+    String data = await DefaultAssetBundle.of(context).loadString(jsonFile);
+    // final activities = jsonDecode(data);
+    final List activityList = json.decode(data);
+    activityListData =
+        activityList.map((val) => Activitydata.fromJson(val)).toList();
+
+    _seriesLineData.add(
+      charts.Series(
+        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
+        id: 'Heart Rate',
+        data: activityListData,
+        domainFn: (Activitydata activity, _) =>
+            double.parse(activity.elapsedTime),
+        measureFn: (Activitydata activity, _) =>
+            activity.hearRate != null ? double.parse(activity.hearRate) : null,
+      ),
+    );
+
+    //add temperature metric to line chart
+    addTemperature();
+
+    _seriesLineData.add(
+      charts.Series(
+        colorFn: (__, _) => charts.Color.fromHex(code: '#5BD5EE'),
+        id: 'Speed(mph)',
+        data: activityListData,
+        domainFn: (Activitydata activity, _) =>
+            double.parse(activity.elapsedTime),
+        measureFn: (Activitydata activity, _) => activity.speed != null
+            ? double.parse(activity.speed) * 2.23694
+            : null,
+      )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
+    );
+
+    setState(() {
+      isload = true;
+    });
+  }
+
+  @override
+  void initState() {
+    print('InitState 2');
+    // TODO: implement initState
+    super.initState();
+    _seriesLineData = List<charts.Series<Activitydata, double>>();
+    _generateData(jsonFile: this.widget.jsonFile);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('BUILD CALL 2');
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(0xff1976d2),
+            //backgroundColor: Color(0xff308e1c),
+            bottom: TabBar(
+              indicatorColor: Color(0xff9962D0),
+              tabs: [
+                Tab(icon: Icon(FontAwesomeIcons.chartLine)),
+                Tab(
+                  icon: Icon(FontAwesomeIcons.map),
+                )
+              ],
+            ),
+            title: Text('HUmango : Flutter Charts'),
+          ),
+          body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Athlete charts (2020-01-21)',
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: isload == true
+                              ? charts.LineChart(
+                                  _seriesLineData,
+                                  animate: true,
+                                  primaryMeasureAxis:
+                                      new charts.NumericAxisSpec(
+                                          tickProviderSpec: new charts
+                                                  .BasicNumericTickProviderSpec(
+                                              desiredTickCount: 3)),
+                                  secondaryMeasureAxis:
+                                      new charts.NumericAxisSpec(
+                                          tickProviderSpec: new charts
+                                                  .BasicNumericTickProviderSpec(
+                                              desiredTickCount: 3)),
+                                  animationDuration: Duration(seconds: 2),
+                                  behaviors: [
+                                    new charts.SeriesLegend(
+                                      position: charts.BehaviorPosition.top,
+                                      horizontalFirst: false,
+                                      desiredMaxRows: 2,
+                                      // This defines the padding around each legend entry.
+                                      cellPadding: new EdgeInsets.only(
+                                          right: 2.0, bottom: 4.0, top: 2.0),
+                                      measureFormatter: (num value) {
+                                        return value == null ? '-' : '${value}';
+                                      },
+                                    ),
+                                    new charts.PanAndZoomBehavior(),
+                                    // new charts.InitialSelection(
+                                    //     selectedDataConfig: [
+                                    //       new charts.SeriesDatumConfig<double>(
+                                    //           'Temperature', 0)
+                                    //     ]),
+                                    new charts.LinePointHighlighter(
+                                        symbolRenderer:
+                                            CustomCircleSymbolRenderer(
+                                                textSelected)),
+                                    new charts.ChartTitle('Seconds',
+                                        behaviorPosition:
+                                            charts.BehaviorPosition.bottom,
+                                        titleOutsideJustification: charts
+                                            .OutsideJustification
+                                            .middleDrawArea),
+                                    new charts.ChartTitle(_leftYaxisText,
+                                        behaviorPosition:
+                                            charts.BehaviorPosition.start,
+                                        titleOutsideJustification: charts
+                                            .OutsideJustification
+                                            .middleDrawArea,
+                                        titleStyleSpec: charts.TextStyleSpec(
+                                            fontSize: 11,
+                                            color: charts
+                                                .StyleFactory.style.tickColor)),
+                                    new charts.ChartTitle(_rightYaxisText,
+                                        behaviorPosition:
+                                            charts.BehaviorPosition.end,
+                                        titleOutsideJustification: charts
+                                            .OutsideJustification
+                                            .middleDrawArea,
+                                        titleStyleSpec: charts.TextStyleSpec(
+                                            fontSize: 11,
+                                            color: charts
+                                                .StyleFactory.style.tickColor))
+                                  ],
+                                  selectionModels: [
+                                    charts.SelectionModelConfig(changedListener:
+                                        (charts.SelectionModel model) {
+                                      if (model.hasDatumSelection) {
+                                        textSelected = model.selectedSeries[0]
+                                            .measureFn(
+                                                model.selectedDatum[0].index)
+                                            .toString();
+
+                                        setState(() {
+                                          //Selected Point
+                                          textSelected = model.selectedSeries[0]
+                                              .measureFn(
+                                                  model.selectedDatum[0].index)
+                                              .toString();
+
+                                          //Selected Model or series
+                                          modelSelected = model
+                                              .selectedSeries[0].id
+                                              .toString();
+                                        });
+                                        print('selectionModels --------------');
+                                        print(model.selectedSeries[0].id
+                                            .toString());
+                                      }
+                                    })
+                                  ],
+                                )
+                              : Container(),
+                        ),
+                        CheckboxListTile(
+                          title: Text('Temprature'),
+                          value: _isTempratureSelected,
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              _isTempratureSelected = newValue;
+                              if (_isTempratureSelected) {
+                                addTemperature();
+                              } else {
+                                removeTemperature();
+                              }
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: Text('Pace'),
+                          value: _isPaceSelected,
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              _isPaceSelected = newValue;
+                              if (_isPaceSelected) {
+                                addPace();
+                              } else {
+                                removePace();
+                              }
+                            });
+                          },
+                        ),
+                        modelSelected != null
+                            ? Card(
+                                child: new Column(children: <Widget>[
+                                  new ListTile(
+                                    leading: new Icon(
+                                      Icons.adjust,
+                                      color: Colors.blue,
+                                      size: 20.0,
+                                    ),
+                                    title: new Text(
+                                      modelSelected != null
+                                          ? "Point: " + modelSelected
+                                          : "Point:",
+                                      style: new TextStyle(
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    subtitle: new Text(
+                                        textSelected != null
+                                            ? textSelected
+                                            : '',
+                                        style: new TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  )
+                                ]),
+                              )
+                            : Container()
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                            child: MapPage(
+                          jsonFile: this.widget.jsonFile,
+                        )),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "activity_id": 10915546618,
+    "act_timestamp": 1491841048,
+    "total_elapsed_time": 5097.5,
+    "total_timer_time": 4151.77,
+    "total_distance": 21644.7,
+    "sport": "CYCLING"
+  },
+  {
+    "activity_id": 47670103279,
+    "act_timestamp": 1579562266,
+    "total_elapsed_time": 3642.24,
+    "total_timer_time": 3602.19,
+    "total_distance": 0,
+    "sport": "CYCLING"
+  },
+  {
+    "activity_id": 45878132214,
+    "act_timestamp": 1577141226,
+    "total_elapsed_time": 6353.34,
+    "total_timer_time": 6205.05,
+    "total_distance": 29825.6,
+    "sport": "RUNNING"
+  },
+  {
+    "activity_id": 11169181041,
+    "act_timestamp": 1492966012,
+    "total_elapsed_time": 3734.59,
+    "total_timer_time": 3126.44,
+    "total_distance": 21546.2,
+    "sport": "CYCLING"
+  },
+  {
+    "activity_id": 10385017421,
+    "act_timestamp": 1489568642,
+    "total_elapsed_time": 4160.72,
+    "total_timer_time": 4160.72,
+    "total_distance": 32813.7,
+    "sport": "TRAINING"
+  }
+]
