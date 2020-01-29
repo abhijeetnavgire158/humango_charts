@@ -9,8 +9,8 @@ import 'package:humango_chart/activitydata.dart';
 const double CAMERA_ZOOM = 13;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
-const LatLng SOURCE_LOCATION = LatLng(40.044184662401676, -105.29530922882259);
-const LatLng DEST_LOCATION = LatLng(40.04424015060067, -105.29516790993512);
+LatLng sourceLocation = LatLng(40.044184662401676, -105.29530922882259);
+LatLng destLocation = LatLng(40.04424015060067, -105.29516790993512);
 
 class MapPage extends StatefulWidget {
   final Widget child;
@@ -38,6 +38,7 @@ class MapPageState extends State<MapPage> {
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
   List<Activitydata> activityListData;
+  bool isLoaded = false;
 
   _semicirclesTodegrees(double semicircles) {
     semicircles = semicircles != null ? semicircles : 0;
@@ -56,14 +57,39 @@ class MapPageState extends State<MapPage> {
         activityList.map((val) => Activitydata.fromJson(val)).toList();
     print(activityListData);
 
-    activityListData.forEach((Activitydata activity) {
-      print('ACTIVITY--1');
-      print(activity.latitude);
-      double actLat = _semicirclesTodegrees(double.parse(activity.latitude));
-      print(activity.longitude);
-      double actLong = _semicirclesTodegrees(double.parse(activity.longitude));
+    print('ACTIVITY--1');
 
-      polylineCoordinates.add(LatLng(actLat, actLong));
+    Activitydata sourceLocationData =
+        activityListData.firstWhere((act) => act.latitude != null);
+    Activitydata destLocationData =
+        activityListData.lastWhere((act) => act.latitude != null);
+
+    if (sourceLocationData != null && destLocationData != null) {
+      sourceLocation = LatLng(
+          _semicirclesTodegrees(double.parse(sourceLocationData.latitude)),
+          _semicirclesTodegrees(double.parse(sourceLocationData.longitude)));
+      destLocation = LatLng(
+          _semicirclesTodegrees(double.parse(destLocationData.latitude)),
+          _semicirclesTodegrees(double.parse(destLocationData.longitude)));
+      setState(() {
+        isLoaded = true;
+      });
+    }
+
+    activityListData.forEach((Activitydata activity) {
+      if (activity.latitude != null && activity.longitude != null) {
+        print(activity.latitude);
+        double actLat = _semicirclesTodegrees(double.parse(activity.latitude));
+        print(activity.longitude);
+        double actLong =
+            _semicirclesTodegrees(double.parse(activity.longitude));
+
+        polylineCoordinates.add(LatLng(actLat, actLong));
+      }
+    });
+
+    setState(() {
+      isLoaded = true;
     });
   }
 
@@ -71,6 +97,7 @@ class MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     setSourceAndDestinationIcons();
+    // _generateData(jsonFile: this.widget.jsonFile);
   }
 
   void setSourceAndDestinationIcons() async {
@@ -89,7 +116,8 @@ class MapPageState extends State<MapPage> {
         zoom: CAMERA_ZOOM,
         bearing: CAMERA_BEARING,
         tilt: CAMERA_TILT,
-        target: SOURCE_LOCATION);
+        target: sourceLocation);
+
     return GoogleMap(
         myLocationEnabled: true,
         compassEnabled: true,
@@ -111,6 +139,10 @@ class MapPageState extends State<MapPage> {
 
     setMapPins();
     setPolylines();
+
+    setState(() {
+      isLoaded = true;
+    });
   }
 
   void setMapPins() {
@@ -118,12 +150,12 @@ class MapPageState extends State<MapPage> {
       // source pin
       _markers.add(Marker(
           markerId: MarkerId('sourcePin'),
-          position: SOURCE_LOCATION,
+          position: sourceLocation,
           icon: sourceIcon));
       // destination pin
       _markers.add(Marker(
           markerId: MarkerId('destPin'),
-          position: DEST_LOCATION,
+          position: destLocation,
           icon: destinationIcon));
     });
   }
@@ -131,10 +163,10 @@ class MapPageState extends State<MapPage> {
   setPolylines() async {
     List<PointLatLng> result = await polylinePoints?.getRouteBetweenCoordinates(
         googleAPIKey,
-        SOURCE_LOCATION.latitude,
-        SOURCE_LOCATION.longitude,
-        DEST_LOCATION.latitude,
-        DEST_LOCATION.longitude);
+        sourceLocation.latitude,
+        sourceLocation.longitude,
+        destLocation.latitude,
+        destLocation.longitude);
     if (result.isNotEmpty) {
       // loop through all PointLatLng points and convert them
       // to a list of LatLng, required by the Polyline
@@ -145,7 +177,9 @@ class MapPageState extends State<MapPage> {
     }
 
     await _generateData(jsonFile: this.widget.jsonFile);
-
+    setState(() {
+      isLoaded = true;
+    });
     setState(() {
       // create a Polyline instance
       // with an id, an RGB color and the list of LatLng pairs
@@ -161,6 +195,8 @@ class MapPageState extends State<MapPage> {
       // to the polyline set, which will eventually
       // end up showing up on the map
       _polylines.add(polyline);
+
+      isLoaded = true;
     });
   }
 }

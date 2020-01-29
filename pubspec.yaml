@@ -48,9 +48,12 @@ flutter:
     - jsondata/data2.json
     - jsondata/activitylist.json
     - jsondata/latlong.json
-    - images/destination_map_marker.png
-    - images/driving_pin.png
+    - images/
     - jsondata/activity_records/
+  fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: fonts/MyFlutterApp.ttf
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see

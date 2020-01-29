@@ -10,8 +10,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class HomePage extends StatefulWidget {
   final Widget child;
   final String jsonFile;
+  final String activityDate;
+  final int tabIndex;
 
-  HomePage({Key key, this.child, @required this.jsonFile}) : super(key: key);
+  HomePage(
+      {Key key,
+      this.child,
+      @required this.jsonFile,
+      @required this.activityDate,
+      @required this.tabIndex})
+      : super(key: key);
 
   _HomePageState createState() => _HomePageState();
 }
@@ -145,6 +153,7 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       home: DefaultTabController(
         length: 2,
+        initialIndex: this.widget.tabIndex,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xff1976d2),
@@ -170,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          'Athlete charts (2020-01-21)',
+                          'Athlete charts ${this.widget.activityDate}',
                           style: TextStyle(
                               fontSize: 24.0, fontWeight: FontWeight.bold),
                         ),

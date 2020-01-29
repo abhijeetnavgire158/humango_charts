@@ -6,11 +6,12 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:humango_chart/homepage.dart';
 import 'package:humango_chart/model/activitylistmodel.dart';
+import 'package:humango_chart/presentation/my_flutter_app_icons.dart';
 import 'package:intl/intl.dart';
 
 class ActivityListDataSource extends DataTableSource {
   final Function() onDataLoad;
-  final Function(int) onSelectClick;
+  final Function(int, String, String) onSelectClick;
 
 //const ActivityListDataSource({Key key, @required this.onSelectClick,@required this.onCancelClick}) : super(key: key);
   List<ActivityListModel> activityListData = [];
@@ -31,8 +32,6 @@ class ActivityListDataSource extends DataTableSource {
     final List activityList = json.decode(data);
     activityListData =
         activityList.map((val) => ActivityListModel.fromJson(val)).toList();
-
-    print(activityListData);
     this.onDataLoad();
   }
 
@@ -53,14 +52,9 @@ class ActivityListDataSource extends DataTableSource {
 
   int _selectedCount = 0;
 
-  selectedActivityId(activityId) {
-    print('selectedActivityId');
-    print(activityId);
-    onSelectClick(activityId);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => SecondRoute()),
-    // );
+  selectedActivityId(activityId, activityDate, type) {
+    print("selected activity id ${activityId}");
+    onSelectClick(activityId, activityDate, type);
   }
 
   @override
@@ -71,8 +65,13 @@ class ActivityListDataSource extends DataTableSource {
     final ActivityListModel activity = activityListData[index];
     var date =
         new DateTime.fromMillisecondsSinceEpoch(activity.actTimestamp * 1000);
-    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+    String activityDate = DateFormat('yyyy-MM-dd').format(date);
     String distance = (activity.totalDistance * 0.001).toStringAsFixed(2);
+    String sport = activity.sport.toLowerCase();
+    IconData sportIcon = sport == 'cycling'
+        ? MyFlutterApp.bicycle
+        : sport == 'running' ? MyFlutterApp.directions_run : MyFlutterApp.alarm;
+
     return DataRow.byIndex(
       index: index,
       cells: <DataCell>[
@@ -82,7 +81,7 @@ class ActivityListDataSource extends DataTableSource {
               size: 12,
               color: Colors.blueAccent,
             ), onTap: () {
-          selectedActivityId(activity.activityId);
+          selectedActivityId(activity.activityId, activityDate, 'graph');
         }),
         DataCell(
             Icon(
@@ -90,10 +89,10 @@ class ActivityListDataSource extends DataTableSource {
               size: 12,
               color: Colors.blueAccent,
             ), onTap: () {
-          selectedActivityId(activity.activityId);
+          selectedActivityId(activity.activityId, activityDate, 'map');
         }),
-        DataCell(Text(formattedDate)),
-        DataCell(Text('${activity.sport}')),
+        DataCell(Text(activityDate)),
+        DataCell(Icon(sportIcon)),
         DataCell(Center(
           child: Text(distance),
         )),
@@ -133,12 +132,17 @@ class _ActivityListTableState extends State<ActivityListTable> {
     });
   }
 
-  onSelectClick(int value) {
-    print('onSelectClick widget');
+  onSelectClick(int value, String activityDate, String type) {
     String jsonFile = path + value.toString() + '.json';
+    int tabIndex = (type == 'graph') ? 0 : 1;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomePage(jsonFile: jsonFile)),
+      MaterialPageRoute(
+          builder: (context) => HomePage(
+                jsonFile: jsonFile,
+                activityDate: activityDate,
+                tabIndex: tabIndex,
+              )),
     );
   }
 
@@ -226,7 +230,7 @@ class _ActivityListTableState extends State<ActivityListTable> {
                       ),
                     ],
                     source: _activityListDataSource,
-                    columnSpacing: 25,
+                    columnSpacing: 20,
                   ),
                 ],
               )
