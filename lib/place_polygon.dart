@@ -6,11 +6,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:humango_chart/activitydata.dart';
 
-const double CAMERA_ZOOM = 13;
+const double CAMERA_ZOOM = 10;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 LatLng sourceLocation = LatLng(40.044184662401676, -105.29530922882259);
-LatLng destLocation = LatLng(40.04424015060067, -105.29516790993512);
+LatLng destLocation = LatLng(40.044184662401676, -105.29530922882259);
 
 class MapPage extends StatefulWidget {
   final Widget child;
@@ -52,6 +52,7 @@ class MapPageState extends State<MapPage> {
     print('MapPageState ss 3');
     String data = await DefaultAssetBundle.of(context).loadString(jsonFile);
     // final activities = jsonDecode(data);
+
     final List activityList = json.decode(data);
     activityListData =
         activityList.map((val) => Activitydata.fromJson(val)).toList();
@@ -97,7 +98,8 @@ class MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     setSourceAndDestinationIcons();
-    // _generateData(jsonFile: this.widget.jsonFile);
+
+    _generateData(jsonFile: this.widget.jsonFile);
   }
 
   void setSourceAndDestinationIcons() async {
@@ -117,20 +119,24 @@ class MapPageState extends State<MapPage> {
         bearing: CAMERA_BEARING,
         tilt: CAMERA_TILT,
         target: sourceLocation);
+    print('ISLOADING');
+    print(isLoaded);
 
-    return GoogleMap(
-        myLocationEnabled: true,
-        compassEnabled: true,
-        tiltGesturesEnabled: false,
-        markers: _markers,
-        polylines: _polylines,
-        mapType: MapType.normal,
-        initialCameraPosition: initialLocation,
-        onMapCreated: onMapCreated,
-        onTap: (latlang) {
-          print('LATLANG');
-          print(latlang);
-        });
+    return isLoaded
+        ? GoogleMap(
+            myLocationEnabled: true,
+            compassEnabled: true,
+            tiltGesturesEnabled: false,
+            markers: _markers,
+            polylines: _polylines,
+            mapType: MapType.normal,
+            initialCameraPosition: initialLocation,
+            onMapCreated: onMapCreated,
+            onTap: (latlang) {
+              print('LATLANG');
+              print(latlang);
+            })
+        : Container(child: Text('Loading'));
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -176,7 +182,7 @@ class MapPageState extends State<MapPage> {
       // });
     }
 
-    await _generateData(jsonFile: this.widget.jsonFile);
+    // await _generateData(jsonFile: this.widget.jsonFile);
     setState(() {
       isLoaded = true;
     });
