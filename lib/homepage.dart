@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:humango_chart/activity_summary.dart';
 import 'package:humango_chart/activitydata.dart';
+import 'package:humango_chart/graph/activity_summary_graph.dart';
 import 'package:humango_chart/model/activitylistmodel.dart';
 import 'package:humango_chart/place_polygon.dart';
 import 'package:humango_chart/tooltip.dart';
@@ -163,7 +164,7 @@ class _HomePageState extends State<HomePage> {
 
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         initialIndex: this.widget.tabIndex,
         child: Scaffold(
           appBar: PreferredSize(
@@ -179,6 +180,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Tab(
                       icon: Icon(FontAwesomeIcons.list),
+                    ),
+                    Tab(
+                      icon: Icon(FontAwesomeIcons.bars),
                     )
                   ],
                 ),
@@ -382,6 +386,19 @@ class _HomePageState extends State<HomePage> {
                             child: ActivitySummary(
                                 selectedActivityData:
                                     this.widget.selectedActivityData)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                            child: ActivitySummaryBarChart.withSampleData()),
                       ],
                     ),
                   ),

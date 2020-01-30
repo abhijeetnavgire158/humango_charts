@@ -33,6 +33,9 @@ class _ActivitySummaryState extends State<ActivitySummary> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPotrait =
+        (MediaQuery.of(context).orientation == Orientation.portrait);
+    double rowHeight = isPotrait ? 50 : 40;
     return Scrollbar(
       child: Container(
         child: Column(
@@ -130,16 +133,19 @@ class _ActivitySummaryState extends State<ActivitySummary> {
                   ),
                 ])),
             Container(
-                height: 50,
+                height: rowHeight,
                 child: _cellwithData(selectedActivity, 'Heart Rate')),
             Container(
-                height: 50, child: _cellwithData(selectedActivity, 'Power')),
+                height: rowHeight,
+                child: _cellwithData(selectedActivity, 'Power')),
             Container(
-                height: 50, child: _cellwithData(selectedActivity, 'Speed')),
+                height: rowHeight,
+                child: _cellwithData(selectedActivity, 'Speed')),
             Container(
-                height: 50, child: _cellwithData(selectedActivity, 'Cadence')),
+                height: rowHeight,
+                child: _cellwithData(selectedActivity, 'Cadence')),
             Container(
-                height: 50,
+                height: rowHeight,
                 child: _cellwithData(selectedActivity, 'Temperature'))
           ],
         ),
