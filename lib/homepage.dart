@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:humango_chart/activitydata.dart';
+import 'package:humango_chart/model/activitylistmodel.dart';
 import 'package:humango_chart/place_polygon.dart';
 import 'package:humango_chart/tooltip.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
   final Widget child;
   final String jsonFile;
   final String activityDate;
+  final ActivityListModel selectedActivityData;
   final int tabIndex;
 
   HomePage(
@@ -18,7 +20,8 @@ class HomePage extends StatefulWidget {
       this.child,
       @required this.jsonFile,
       @required this.activityDate,
-      @required this.tabIndex})
+      @required this.tabIndex,
+      @required this.selectedActivityData})
       : super(key: key);
 
   _HomePageState createState() => _HomePageState();
@@ -145,30 +148,41 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _seriesLineData = List<charts.Series<Activitydata, double>>();
     _generateData(jsonFile: this.widget.jsonFile);
+    print('selected activity data');
+    print(this.widget.selectedActivityData);
   }
 
   @override
   Widget build(BuildContext context) {
     print('BUILD CALL 2');
+    bool isPotrait =
+        (MediaQuery.of(context).orientation == Orientation.portrait);
+    double titleFontSize = isPotrait ? 24 : 16;
+    double appBarHeight = isPotrait ? 100 : 70;
+
     return MaterialApp(
       home: DefaultTabController(
-        length: 2,
+        length: 3,
         initialIndex: this.widget.tabIndex,
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color(0xff1976d2),
-            //backgroundColor: Color(0xff308e1c),
-            bottom: TabBar(
-              indicatorColor: Color(0xff9962D0),
-              tabs: [
-                Tab(icon: Icon(FontAwesomeIcons.chartLine)),
-                Tab(
-                  icon: Icon(FontAwesomeIcons.map),
-                )
-              ],
-            ),
-            title: Text('HUmango : Flutter Charts'),
-          ),
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(appBarHeight),
+              child: AppBar(
+                backgroundColor: Color(0xff1976d2),
+                bottom: TabBar(
+                  indicatorColor: Color(0xff9962D0),
+                  tabs: [
+                    Tab(icon: Icon(FontAwesomeIcons.chartLine)),
+                    Tab(
+                      icon: Icon(FontAwesomeIcons.map),
+                    ),
+                    Tab(
+                      icon: Icon(FontAwesomeIcons.list),
+                    )
+                  ],
+                ),
+                title: Text('HUmango : Flutter Charts'),
+              )),
           body: TabBarView(
             physics: NeverScrollableScrollPhysics(),
             children: [
@@ -181,7 +195,8 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           'Athlete charts ${this.widget.activityDate}',
                           style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                              fontSize: titleFontSize,
+                              fontWeight: FontWeight.bold),
                         ),
                         Expanded(
                           child: isload == true
@@ -203,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                                     new charts.SeriesLegend(
                                       position: charts.BehaviorPosition.top,
                                       horizontalFirst: false,
-                                      desiredMaxRows: 2,
+                                      desiredMaxRows: isPotrait ? 2 : 1,
                                       // This defines the padding around each legend entry.
                                       cellPadding: new EdgeInsets.only(
                                           right: 2.0, bottom: 4.0, top: 2.0),
@@ -278,34 +293,38 @@ class _HomePageState extends State<HomePage> {
                                 )
                               : Container(),
                         ),
-                        CheckboxListTile(
-                          title: Text('Temprature'),
-                          value: _isTempratureSelected,
-                          onChanged: (bool newValue) {
-                            setState(() {
-                              _isTempratureSelected = newValue;
-                              if (_isTempratureSelected) {
-                                addTemperature();
-                              } else {
-                                removeTemperature();
-                              }
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          title: Text('Pace'),
-                          value: _isPaceSelected,
-                          onChanged: (bool newValue) {
-                            setState(() {
-                              _isPaceSelected = newValue;
-                              if (_isPaceSelected) {
-                                addPace();
-                              } else {
-                                removePace();
-                              }
-                            });
-                          },
-                        ),
+                        isPotrait
+                            ? CheckboxListTile(
+                                title: Text('Temprature'),
+                                value: _isTempratureSelected,
+                                onChanged: (bool newValue) {
+                                  setState(() {
+                                    _isTempratureSelected = newValue;
+                                    if (_isTempratureSelected) {
+                                      addTemperature();
+                                    } else {
+                                      removeTemperature();
+                                    }
+                                  });
+                                },
+                              )
+                            : Container(),
+                        isPotrait
+                            ? CheckboxListTile(
+                                title: Text('Pace'),
+                                value: _isPaceSelected,
+                                onChanged: (bool newValue) {
+                                  setState(() {
+                                    _isPaceSelected = newValue;
+                                    if (_isPaceSelected) {
+                                      addPace();
+                                    } else {
+                                      removePace();
+                                    }
+                                  });
+                                },
+                              )
+                            : Container(),
                         modelSelected != null
                             ? Card(
                                 child: new Column(children: <Widget>[
@@ -332,6 +351,21 @@ class _HomePageState extends State<HomePage> {
                                 ]),
                               )
                             : Container()
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                            child: MapPage(
+                          jsonFile: this.widget.jsonFile,
+                        )),
                       ],
                     ),
                   ),

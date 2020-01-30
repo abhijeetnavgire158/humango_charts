@@ -5,7 +5,19 @@
     "total_elapsed_time": 5097.5,
     "total_timer_time": 4151.77,
     "total_distance": 21644.7,
-    "sport": "CYCLING"
+    "sport": "CYCLING",
+    "avg_heart_rate": 115,
+    "max_heart_rate": 143,
+    "avg_speed": 5.213,
+    "max_speed": 13.399,
+    "avg_power": 141,
+    "max_power": 438,
+    "avg_cadence": 77,
+    "max_cadence": 104,
+    "avg_temperature": null,
+    "max_temperature": null,
+    "avg_altitude": null,
+    "max_altitude": null
   },
   {
     "activity_id": 47670103279,
@@ -13,7 +25,19 @@
     "total_elapsed_time": 3642.24,
     "total_timer_time": 3602.19,
     "total_distance": 0,
-    "sport": "CYCLING"
+    "sport": "CYCLING",
+    "avg_heart_rate": 155,
+    "max_heart_rate": 172,
+    "avg_speed": null,
+    "max_speed": null,
+    "avg_power": 201,
+    "max_power": 302,
+    "avg_cadence": 88,
+    "max_cadence": 99,
+    "avg_temperature": 24,
+    "max_temperature": 29,
+    "avg_altitude": null,
+    "max_altitude": null
   },
   {
     "activity_id": 45878132214,
@@ -21,7 +45,19 @@
     "total_elapsed_time": 6353.34,
     "total_timer_time": 6205.05,
     "total_distance": 29825.6,
-    "sport": "RUNNING"
+    "sport": "CYCLING",
+    "avg_heart_rate": 134,
+    "max_heart_rate": 165,
+    "avg_speed": null,
+    "max_speed": null,
+    "avg_power": 138,
+    "max_power": 532,
+    "avg_cadence": 62,
+    "max_cadence": 37,
+    "avg_temperature": 16,
+    "max_temperature": 30,
+    "avg_altitude": null,
+    "max_altitude": null
   },
   {
     "activity_id": 11169181041,
@@ -29,7 +65,19 @@
     "total_elapsed_time": 3734.59,
     "total_timer_time": 3126.44,
     "total_distance": 21546.2,
-    "sport": "CYCLING"
+    "sport": "CYCLING",
+    "avg_heart_rate": 137,
+    "max_heart_rate": 175,
+    "avg_speed": 6.892,
+    "max_speed": 11.878,
+    "avg_power": 236,
+    "max_power": 611,
+    "avg_cadence": 88,
+    "max_cadence": 129,
+    "avg_temperature": null,
+    "max_temperature": null,
+    "avg_altitude": null,
+    "max_altitude": null
   },
   {
     "activity_id": 10385017421,
@@ -37,6 +85,18 @@
     "total_elapsed_time": 4160.72,
     "total_timer_time": 4160.72,
     "total_distance": 32813.7,
-    "sport": "TRAINING"
+    "sport": "CYCLING",
+    "avg_heart_rate": null,
+    "max_heart_rate": null,
+    "avg_speed": 7.887,
+    "max_speed": 15.685,
+    "avg_power": 223,
+    "max_power": 515,
+    "avg_cadence": 79,
+    "max_cadence": 108,
+    "avg_temperature": null,
+    "max_temperature": null,
+    "avg_altitude": null,
+    "max_altitude": null
   }
 ]

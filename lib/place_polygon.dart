@@ -106,7 +106,7 @@ class MapPageState extends State<MapPage> {
     print('setSourceAndDestinationIcons call');
     sourceIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5),
-        'images/destination_map_marker.png');
+        'images/maps-and-location.png');
     destinationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5),
         'images/destination_map_marker.png');

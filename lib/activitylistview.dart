@@ -56,20 +56,6 @@ class _ActivityListViewState extends State<ActivityListView> {
     });
   }
 
-  onSelectClick(int value, String activityDate, String type) {
-    String jsonFile = path + value.toString() + '.json';
-    int tabIndex = (type == 'graph') ? 0 : 1;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => HomePage(
-                jsonFile: jsonFile,
-                activityDate: activityDate,
-                tabIndex: tabIndex,
-              )),
-    );
-  }
-
   onDataLoad() {
     setState(() {
       tableCount = activityListData.length;
@@ -113,7 +99,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                                   padding: const EdgeInsets.only(top: 0),
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.25,
+                                        0.23,
                                     height: 40,
 // margin: const EdgeInsets.all(0.0), // space between cell
                                     padding: const EdgeInsets.only(top: 5),
@@ -167,7 +153,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                                 padding: const EdgeInsets.only(top: 0),
                                 child: Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.27,
+                                      MediaQuery.of(context).size.width * 0.25,
                                   height: 40,
                                   padding: const EdgeInsets.only(top: 5),
                                   decoration: BoxDecoration(
@@ -217,7 +203,9 @@ class _ActivityListViewState extends State<ActivityListView> {
                                 )),
                           ),
                         ])),
-                    Container(height: 400, child: _buildPaginatedListView()),
+                    Container(
+                        height: (MediaQuery.of(context).size.height - 200),
+                        child: _buildPaginatedListView()),
                   ],
                 ),
               )
@@ -229,6 +217,8 @@ class _ActivityListViewState extends State<ActivityListView> {
   _loadMore() async {
     print('LOAD MORE');
     print(tableCount);
+    print('HEIGHT');
+    print(MediaQuery.of(context).size.height.toString());
     List<ActivityListModel> listData = [];
     if (tableCount <= totalRecords) {
       listData = await getData();
@@ -273,9 +263,9 @@ class _ActivityListViewState extends State<ActivityListView> {
     );
   }
 
-  _selectedActivityId(activityId, activityDate, type) {
+  _selectedActivityId(
+      activityId, activityDate, type, ActivityListModel selectedActivity) {
     print("selected activity id ${activityId}");
-    // onSelectClick(activityId, activityDate, type);
     String jsonFile = path + activityId.toString() + '.json';
     int tabIndex = (type == 'graph') ? 0 : 1;
     Navigator.push(
@@ -285,6 +275,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                 jsonFile: jsonFile,
                 activityDate: activityDate,
                 tabIndex: tabIndex,
+                selectedActivityData: selectedActivity,
               )),
     );
   }
@@ -315,7 +306,7 @@ class _ActivityListViewState extends State<ActivityListView> {
               child: Row(children: <Widget>[
                 Center(
                     child: Container(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                  width: MediaQuery.of(context).size.width * 0.23,
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                       border: Border(
@@ -331,7 +322,7 @@ class _ActivityListViewState extends State<ActivityListView> {
 //fontWeight: FontWeight.bold,
                         fontFamily: "Poppins",
                         fontStyle: FontStyle.normal,
-                        fontSize: 16.0),
+                        fontSize: 14.0),
                   ),
                 )),
                 Center(
@@ -342,7 +333,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                         border: Border(
                       right: BorderSide(
                         color: Colors.grey[700],
-                        width: 0.5,
+                        width: 0.9,
                       ),
                     )),
                     child: Icon(sportIcon),
@@ -350,7 +341,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                 ),
                 Center(
                     child: Container(
-                  width: MediaQuery.of(context).size.width * 0.27,
+                  width: MediaQuery.of(context).size.width * 0.25,
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                       border: Border(
@@ -384,7 +375,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                         InkWell(
                           onTap: () => {
                             _selectedActivityId(
-                                model.activityId, activityDate, 'graph')
+                                model.activityId, activityDate, 'graph', model)
                           },
                           child: Icon(
                             FontAwesomeIcons.chartLine,
@@ -396,7 +387,7 @@ class _ActivityListViewState extends State<ActivityListView> {
                         InkWell(
                           onTap: () => {
                             _selectedActivityId(
-                                model.activityId, activityDate, 'map')
+                                model.activityId, activityDate, 'map', model)
                           },
                           child: Icon(
                             FontAwesomeIcons.map,
