@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                       icon: Icon(FontAwesomeIcons.list),
                     ),
                     Tab(
-                      icon: Icon(FontAwesomeIcons.bars),
+                      icon: Icon(FontAwesomeIcons.alignRight),
                     )
                   ],
                 ),

@@ -27,44 +27,44 @@ class ActivitySummaryBarChart extends StatelessWidget {
   }
 
   /// Create series list with multiple series
-  static List<charts.Series<OrdinalSales, String>> _createSampleData() {
-    final desktopSalesData = [
-      new OrdinalSales('Heart Rate', 154),
-      new OrdinalSales('Speed', 5),
-      new OrdinalSales('Power', 100),
-      new OrdinalSales('Cadence', 75),
+  static List<charts.Series<activityRecords, String>> _createSampleData() {
+    final maxData = [
+      new activityRecords('Heart Rate', 154),
+      new activityRecords('Speed', 5),
+      new activityRecords('Power', 100),
+      new activityRecords('Cadence', 75),
     ];
 
-    final tableSalesData = [
-      new OrdinalSales('Heart Rate', 134),
-      new OrdinalSales('Speed', 7),
-      new OrdinalSales('Power', 155),
-      new OrdinalSales('Cadence', 98),
+    final avgData = [
+      new activityRecords('Heart Rate', 134),
+      new activityRecords('Speed', 7),
+      new activityRecords('Power', 155),
+      new activityRecords('Cadence', 98),
     ];
 
     return [
-      new charts.Series<OrdinalSales, String>(
+      new charts.Series<activityRecords, String>(
         id: 'Max Count',
         colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff4d4084)),
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: desktopSalesData,
+        domainFn: (activityRecords actData, _) => actData.title,
+        measureFn: (activityRecords actData, _) => actData.value,
+        data: maxData,
       ),
-      new charts.Series<OrdinalSales, String>(
+      new charts.Series<activityRecords, String>(
         id: 'Avg Count',
         colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xfff5ce3e)),
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: tableSalesData,
+        domainFn: (activityRecords actData, _) => actData.title,
+        measureFn: (activityRecords actData, _) => actData.value,
+        data: avgData,
       ),
     ];
   }
 }
 
 /// Sample ordinal data type.
-class OrdinalSales {
-  final String year;
-  final int sales;
+class activityRecords {
+  final String title;
+  final int value;
 
-  OrdinalSales(this.year, this.sales);
+  activityRecords(this.title, this.value);
 }
