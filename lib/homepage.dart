@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:humango_chart/activity_summary.dart';
 import 'package:humango_chart/activitydata.dart';
 import 'package:humango_chart/model/activitylistmodel.dart';
 import 'package:humango_chart/place_polygon.dart';
@@ -378,9 +379,9 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: <Widget>[
                         Expanded(
-                            child: MapPage(
-                          jsonFile: this.widget.jsonFile,
-                        )),
+                            child: ActivitySummary(
+                                selectedActivityData:
+                                    this.widget.selectedActivityData)),
                       ],
                     ),
                   ),

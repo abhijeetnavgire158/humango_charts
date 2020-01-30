@@ -5,18 +5,18 @@ class ActivityListModel {
   double totalTimerTime;
   double totalDistance;
   String sport;
-  double avgHeartRate;
-  double maxHeartRate;
+  int avgHeartRate;
+  int maxHeartRate;
   double avgSpeed;
   double maxSpeed;
-  double avgPower;
-  double maxPower;
-  double avgCadence;
-  double maxCadence;
-  double avgTemperature;
-  double maxTemperature;
-  double avgAltitude;
-  double maxAltitude;
+  int avgPower;
+  int maxPower;
+  int avgCadence;
+  int maxCadence;
+  int avgTemperature;
+  int maxTemperature;
+  int avgAltitude;
+  int maxAltitude;
 
   bool selected = false;
 
@@ -50,10 +50,10 @@ class ActivityListModel {
     totalDistance = double.parse(json['total_distance'].toString());
     sport = json['sport'].toString();
     avgHeartRate = (json['avg_heart_rate'] != null)
-        ? double.parse(json['avg_heart_rate'].toString())
+        ? int.parse(json['avg_heart_rate'].toString())
         : null;
     maxHeartRate = (json['max_heart_rate'] != null)
-        ? double.parse(json['max_heart_rate'].toString())
+        ? int.parse(json['max_heart_rate'].toString())
         : null;
     avgSpeed = (json['avg_speed'] != null)
         ? double.parse(json['avg_speed'].toString())
@@ -62,28 +62,28 @@ class ActivityListModel {
         ? double.parse(json['max_speed'].toString())
         : null;
     avgPower = (json['avg_power'] != null)
-        ? double.parse(json['avg_power'].toString())
+        ? int.parse(json['avg_power'].toString())
         : null;
     maxPower = (json['max_power'] != null)
-        ? double.parse(json['max_power'].toString())
+        ? int.parse(json['max_power'].toString())
         : null;
     avgCadence = (json['avg_cadence'] != null)
-        ? double.parse(json['avg_cadence'].toString())
+        ? int.parse(json['avg_cadence'].toString())
         : null;
     maxCadence = (json['max_cadence'] != null)
-        ? double.parse(json['max_cadence'].toString())
+        ? int.parse(json['max_cadence'].toString())
         : null;
     avgTemperature = (json['avg_temperature'] != null)
-        ? double.parse(json['avg_temperature'].toString())
+        ? int.parse(json['avg_temperature'].toString())
         : null;
     maxTemperature = ((json['max_temperature'] != null))
-        ? double.parse(json['max_temperature'].toString())
+        ? int.parse(json['max_temperature'].toString())
         : null;
     avgAltitude = (json['avg_altitude'] != null)
-        ? double.parse(json['avg_altitude'].toString())
+        ? int.parse(json['avg_altitude'].toString())
         : null;
     maxAltitude = (json['max_altitude'] != null)
-        ? double.parse(json['max_altitude'].toString())
+        ? int.parse(json['max_altitude'].toString())
         : null;
   }
 

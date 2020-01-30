@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:humango_chart/activitylist.dart';
 import 'package:humango_chart/activitylistview.dart';
-import 'package:humango_chart/homepage.dart';
-import 'package:humango_chart/mapsample.dart';
 
 void main() => runApp(MyApp());
 
