@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:humango_chart/activity_summary.dart';
 import 'package:humango_chart/activitydata.dart';
 import 'package:humango_chart/graph/activity_summary_graph.dart';
+import 'package:humango_chart/graph/chart.dart';
 import 'package:humango_chart/model/activitylistmodel.dart';
 import 'package:humango_chart/place_polygon.dart';
 import 'package:humango_chart/tooltip.dart';
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   bool _isPaceSelected = false;
   String _leftYaxisText = 'Heart-Rate';
   String _rightYaxisText = 'Temperature|Speed|';
+  String chartTypeDropdownValue = 'Metric Graph';
 
   bool isload = false;
 
@@ -176,6 +178,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildChartTypeDropdown(BuildContext context) {
+    return DropdownButton<String>(
+      value: chartTypeDropdownValue,
+      icon: Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      style: TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String newValue) {
+        setState(() {
+          chartTypeDropdownValue = newValue;
+        });
+      },
+      items: <String>['Metric Graph', 'Bar Graph', 'Line Graph']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
   @override
   void initState() {
     print('InitState 2');
@@ -190,6 +218,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     print('BUILD CALL 2');
+    print(chartTypeDropdownValue);
     bool isPotrait =
         (MediaQuery.of(context).orientation == Orientation.portrait);
     double titleFontSize = isPotrait ? 24 : 16;
@@ -230,6 +259,7 @@ class _HomePageState extends State<HomePage> {
                   child: Center(
                     child: Column(
                       children: <Widget>[
+                        _buildChartTypeDropdown(context),
                         Text(
                           'Athlete charts ${this.widget.activityDate}',
                           style: TextStyle(
@@ -237,7 +267,8 @@ class _HomePageState extends State<HomePage> {
                               fontWeight: FontWeight.bold),
                         ),
                         Expanded(
-                          child: isload == true
+                          child: (isload == true &&
+                                  chartTypeDropdownValue == 'Metric Graph')
                               ? charts.LineChart(
                                   _seriesLineData,
                                   animate: true,
@@ -329,7 +360,14 @@ class _HomePageState extends State<HomePage> {
                                     })
                                   ],
                                 )
-                              : Container(),
+                              : (isload == true &&
+                                      chartTypeDropdownValue == 'Line Graph')
+                                  ? Chart() //Line Chart
+                                  : (isload == true &&
+                                          chartTypeDropdownValue == 'Bar Graph')
+                                      ? ActivitySummaryBarChart
+                                          .withSampleData() //Bar Chart
+                                      : Container(),
                         ),
                         isPotrait
                             ? CheckboxListTile(
