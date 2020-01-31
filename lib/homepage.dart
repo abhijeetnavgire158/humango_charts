@@ -94,8 +94,18 @@ class _HomePageState extends State<HomePage> {
         data: activityListData,
         domainFn: (Activitydata activity, _) =>
             double.parse(activity.elapsedTime),
-        measureFn: (Activitydata activity, _) =>
-            activity.speed != null ? double.parse(activity.speed) : null,
+        measureFn: (Activitydata activity, _) {
+          if (activity.speed != null) {
+            double actSpeed = double.parse(activity.speed);
+            double speedMPH = actSpeed * 2.23694;
+            double pace = (1 / speedMPH) * 60;
+
+            // return activity.speed != "0.0" ? pace : 0.0;
+            return actSpeed;
+          }
+
+          return null;
+        },
       )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
     );
     _rightYaxisText = _rightYaxisText.replaceFirst('Pace|', '');
@@ -141,6 +151,29 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isload = true;
     });
+  }
+
+  /**
+   * Generate Tooltip card
+   */
+  Widget _tooltipCard(String modelSelected, String textSelected) {
+    return Card(
+      child: new Column(children: <Widget>[
+        new ListTile(
+          leading: new Icon(
+            Icons.adjust,
+            color: Colors.blue,
+            size: 20.0,
+          ),
+          title: new Text(
+            modelSelected != null ? "Point: " + modelSelected : "Point:",
+            style: new TextStyle(fontWeight: FontWeight.w400),
+          ),
+          subtitle: new Text(textSelected != null ? textSelected : '',
+              style: new TextStyle(fontWeight: FontWeight.bold)),
+        )
+      ]),
+    );
   }
 
   @override
@@ -331,30 +364,7 @@ class _HomePageState extends State<HomePage> {
                               )
                             : Container(),
                         modelSelected != null
-                            ? Card(
-                                child: new Column(children: <Widget>[
-                                  new ListTile(
-                                    leading: new Icon(
-                                      Icons.adjust,
-                                      color: Colors.blue,
-                                      size: 20.0,
-                                    ),
-                                    title: new Text(
-                                      modelSelected != null
-                                          ? "Point: " + modelSelected
-                                          : "Point:",
-                                      style: new TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    subtitle: new Text(
-                                        textSelected != null
-                                            ? textSelected
-                                            : '',
-                                        style: new TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  )
-                                ]),
-                              )
+                            ? _tooltipCard(modelSelected, textSelected)
                             : Container()
                       ],
                     ),

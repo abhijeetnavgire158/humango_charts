@@ -59,11 +59,14 @@ class MapPageState extends State<MapPage> {
     print(activityListData);
 
     print('ACTIVITY--1');
-
     Activitydata sourceLocationData =
-        activityListData.firstWhere((act) => act.latitude != null);
+        activityListData.firstWhere((act) => act.latitude != null, orElse: () {
+      print('No Element');
+    });
     Activitydata destLocationData =
-        activityListData.lastWhere((act) => act.latitude != null);
+        activityListData.lastWhere((act) => act.latitude != null, orElse: () {
+      print('No Element');
+    });
 
     if (sourceLocationData != null && destLocationData != null) {
       sourceLocation = LatLng(
@@ -122,7 +125,7 @@ class MapPageState extends State<MapPage> {
     print('ISLOADING');
     print(isLoaded);
 
-    return isLoaded
+    return (isLoaded && !polylineCoordinates.isEmpty)
         ? GoogleMap(
             myLocationEnabled: true,
             compassEnabled: true,
@@ -136,7 +139,9 @@ class MapPageState extends State<MapPage> {
               print('LATLANG');
               print(latlang);
             })
-        : Container(child: Text('Loading'));
+        : (isLoaded && polylineCoordinates.isEmpty)
+            ? Container(child: Text('Empty location data'))
+            : Container(child: Text('Loading'));
   }
 
   void onMapCreated(GoogleMapController controller) {
