@@ -369,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                                           .withSampleData() //Bar Chart
                                       : Container(),
                         ),
-                        isPotrait
+                        isPotrait && chartTypeDropdownValue == 'Metric Graph'
                             ? CheckboxListTile(
                                 title: Text('Temprature'),
                                 value: _isTempratureSelected,
@@ -385,7 +385,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                               )
                             : Container(),
-                        isPotrait
+                        isPotrait && chartTypeDropdownValue == 'Metric Graph'
                             ? CheckboxListTile(
                                 title: Text('Pace'),
                                 value: _isPaceSelected,
